@@ -1,0 +1,122 @@
+/* ============================================
+   BASE.CSS — Variables · Reset · Tipografía
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&display=swap');
+
+/* ---- VARIABLES ---- */
+:root {
+  --blood:      #7a0000;
+  --crimson:    #C0172B;
+  --rose:       #e8294a;
+  --void:       #04000a;
+  --midnight:   #080010;
+  --deep:       #100018;
+  --surface:    #160020;
+  --glass-bg:   rgba(12, 0, 22, 0.72);
+  --glass-border: rgba(120, 0, 0, 0.28);
+  --glass-shine: rgba(200, 20, 50, 0.07);
+  --bone:       #EDE4D4;
+  --silver:     #b8adc8;
+  --muted:      #6e607e;
+  --faint:      #3a2e48;
+  --gold:       #a07830;
+  --glow-sm:    0 0 12px rgba(192,23,43,0.4);
+  --glow-md:    0 0 28px rgba(192,23,43,0.45);
+  --glow-lg:    0 0 50px rgba(192,23,43,0.35);
+  --ease:       cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:   cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring:cubic-bezier(0.34, 1.56, 0.64, 1);
+  --t:          all 0.32s var(--ease);
+  --nav-h:      72px;
+}
+
+/* ---- RESET ---- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background-color: var(--void);
+  color: var(--silver);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+}
+img, video { max-width: 100%; display: block; }
+a { text-decoration: none; }
+button { cursor: pointer; font-family: inherit; }
+input, textarea, select { font-family: inherit; }
+
+/* ---- BODY BACKGROUND ---- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 10%, rgba(120,0,0,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 60% at 85% 85%, rgba(60,0,100,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 70% at 50% 50%, rgba(8,0,16,0.6) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity: 1;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---- TYPOGRAPHY ---- */
+.font-display  { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.06em; }
+.font-serif    { font-family: 'Cormorant Garamond', Georgia, serif; }
+.font-playfair { font-family: 'Playfair Display', Georgia, serif; }
+.font-body     { font-family: 'DM Sans', sans-serif; }
+
+h1, h2, h3    { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; line-height: 1.1; }
+h4, h5, h6    { font-family: 'DM Sans', sans-serif; font-weight: 500; }
+p             { line-height: 1.75; }
+
+.title-display {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 40px rgba(192,23,43,0.35), 0 3px 6px rgba(0,0,0,0.7);
+}
+
+.title-serif {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* ---- PAGE WRAPPER ---- */
+.page-wrapper {
+  min-height: 100vh;
+  padding-top: var(--nav-h);
+  position: relative;
+  z-index: 2;
+}
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--blood); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--crimson); }
+
+/* ---- SELECTION ---- */
+::selection { background: rgba(192,23,43,0.3); color: var(--bone); }
+
+/* ---- UTILITY ---- */
+.text-crimson { color: var(--crimson); }
+.text-bone    { color: var(--bone); }
+.text-muted-dark { color: var(--muted); }
+.z2 { position: relative; z-index: 2; }

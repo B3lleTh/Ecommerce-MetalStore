@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito — Dark Metal Store</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖤</text></svg>">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/navbar.css">
+  <link rel="stylesheet" href="../css/pages.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="site-nav" role="navigation">
+  <div class="nav-left">
+    <div class="nav-logo-img placeholder">
+      <span style="font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--crimson);font-size:1.2rem;">✦</span>
+    </div>
+    <a href="../index.html" class="nav-wordmark">
+      <span class="top-word">Dark Metal Store</span>
+      <span class="sub-word">El Altar del Metal Oscuro</span>
+    </a>
+  </div>
+  <nav class="nav-center">
+    <a href="../index.html" class="nav-link">Inicio</a>
+    <span class="nav-sep"></span>
+    <a href="catalogo.html" class="nav-link" id="nlCatalogo">Catálogo</a>
+    <span class="nav-sep"></span>
+    <a href="nosotros.html" class="nav-link" id="nlNosotros">Nosotros</a>
+    <span class="nav-sep"></span>
+    <a href="contacto.html" class="nav-link" id="nlContacto">Contacto</a>
+  </nav>
+  <div class="nav-right">
+    <a href="login.html" class="nav-btn nav-login-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Entrar
+    </a>
+    <a href="perfil.html" class="nav-btn nav-profile-link" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </a>
+    <button class="nav-btn nav-logout-link logout-btn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Salir
+    </button>
+    <a href="carrito.html" class="nav-action" aria-label="Carrito">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="18" height="18" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="nav-cart-badge cart-count" style="display:none">0</span>
+    </a>
+    <button class="nav-toggle" aria-label="Menú"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-mobile">
+  <a href="../index.html" class="nav-link">Inicio</a>
+  <a href="catalogo.html" class="nav-link">Catálogo</a>
+  <a href="nosotros.html" class="nav-link">Nosotros</a>
+  <a href="contacto.html" class="nav-link">Contacto</a>
+  <div class="nav-mobile-actions">
+    <a href="login.html" class="nav-btn nav-login-link">Entrar</a>
+    <a href="carrito.html" class="nav-btn">Carrito</a>
+  </div>
+</div>
+
+<!-- ORBS -->
+<div class="orb orb-1" style="top:20%;right:5%;left:auto;opacity:.5;"></div>
+
+<div class="page-wrapper py-5">
+  <div class="container">
+    <div class="section-title-wrapper mb-4">
+      <span class="section-eyebrow">Tu selección</span>
+      <h1 class="gothic-title fs-2">Carrito <i class="bi bi-cart3" style="color:var(--crimson);"></i></h1>
+    </div>
+
+    <div class="row g-4">
+      <!-- Cart Items -->
+      <div class="col-lg-8">
+        <div id="cartWrapper">
+          <!-- Rendered by JS -->
+          <div class="text-center py-5">
+            <div class="pentagram">⛧</div>
+            <p style="color:var(--text-muted);margin-top:1rem;font-family:'Cinzel',serif;">Invocando los productos...</p>
+          </div>
+        </div>
+
+        <!-- Continue shopping -->
+        <div class="mt-3">
+          <a href="catalogo.html" class="btn-liquid btn-liquid-outline">
+            <i class="bi bi-arrow-left me-2"></i>Seguir explorando el catálogo
+          </a>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="col-lg-4">
+        <div id="cartSummary" style="display:none;">
+          <div class="glass-card p-4">
+            <h5 style="font-family:'Cinzel',serif;color:var(--bone);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(139,0,0,.2);">
+              Resumen del Pedido
+            </h5>
+
+            <div class="d-flex justify-content-between mb-2" style="font-size:.9rem;color:var(--text-muted);">
+              <span style="font-family:'Cinzel',serif;">Subtotal</span>
+              <span id="cartSubtotal">$0</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3" style="font-size:.9rem;color:var(--text-muted);">
+              <span style="font-family:'Cinzel',serif;">Envío</span>
+              <span id="cartShipping">$99</span>
+            </div>
+
+            <div class="d-flex justify-content-between mb-4" style="border-top:1px solid rgba(139,0,0,.2);padding-top:1rem;">
+              <span style="font-family:'Cinzel Decorative',serif;color:var(--bone);font-size:1rem;">Total</span>
+              <span id="cartTotal" style="font-family:'Cinzel Decorative',serif;color:var(--crimson);font-size:1.2rem;">$0</span>
+            </div>
+
+            <button class="btn-liquid w-100 mb-2" onclick="CartPage.checkout()">
+              <i class="bi bi-lock me-2"></i>Proceder al Pago
+            </button>
+            <button class="btn-liquid btn-liquid-outline w-100" onclick="if(confirm('¿Vaciar el carrito?')){Cart.clear();CartPage.render();}">
+              <i class="bi bi-trash me-2"></i>Vaciar Carrito
+            </button>
+
+            <!-- Shipping note -->
+            <div class="mt-3 p-3" style="background:rgba(139,0,0,.08);border-radius:8px;border:1px solid rgba(139,0,0,.15);">
+              <p style="margin:0;font-size:.78rem;color:var(--text-muted);font-family:'IM Fell English',serif;font-style:italic;">
+                🚀 Envío gratis en pedidos mayores a $1,000 MXN
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal fade modal-gothic" id="checkoutModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" style="font-family:'Cinzel',serif;color:var(--bone);">🛒 Confirmar Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body gothic-form">
+        <p style="color:var(--text-muted);font-family:'IM Fell English',serif;font-style:italic;margin-bottom:1.5rem;">
+          Completa tu información de entrega para sellar el pacto
+        </p>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label>Nombre</label>
+            <input type="text" class="form-control" placeholder="Tu nombre mortal">
+          </div>
+          <div class="col-md-6">
+            <label>Teléfono</label>
+            <input type="tel" class="form-control" placeholder="+52 xxx xxx xxxx">
+          </div>
+          <div class="col-12">
+            <label>Dirección de entrega</label>
+            <input type="text" class="form-control" placeholder="Calle, número, colonia...">
+          </div>
+          <div class="col-md-6">
+            <label>Ciudad</label>
+            <input type="text" class="form-control" placeholder="Ciudad">
+          </div>
+          <div class="col-md-6">
+            <label>CP</label>
+            <input type="text" class="form-control" placeholder="00000">
+          </div>
+        </div>
+        <div class="mt-3 p-3" style="background:rgba(139,0,0,.08);border-radius:8px;">
+          <p style="margin:0;font-size:.8rem;color:var(--text-muted);font-family:'Cinzel',serif;">
+            💳 Pago contra entrega disponible. Demo: no se procesará cobro real.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-liquid btn-liquid-outline" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn-liquid" onclick="CartPage.confirmOrder()">
+          <i class="bi bi-check-circle me-1"></i>Confirmar Pedido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="gothic-footer">
+  <div class="container text-center">
+    <div class="footer-logo mb-2">☩ DarkMetalStore</div>
+    <hr class="footer-divider">
+    <p style="font-size:.75rem;color:var(--text-muted);">© 2024 Dark Metal Store</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/animations.js"></script>
+</body>
+</html>
