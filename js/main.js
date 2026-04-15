@@ -1,833 +1,615 @@
-/* ============================================
-   DARK METAL STORE - Main JS
-   Auth | Cart | Products | Admin | Security
-   ============================================ */
+/* ═══════════════════════════════════════════
+   CASTLEVANIA — script.js
+   Authentication · Products · Cart · Checkout
+═══════════════════════════════════════════ */
 
-"use strict";
+'use strict';
 
-// ================================================
-// AUTH MODULE (credentials stored obfuscated)
-// ================================================
-const _authStore = (() => {
-  // Credentials are never hardcoded as plain strings in global scope
-  // They live inside a closure - not accessible from console
-  const _users = [
-    {
-      id: 1,
-      username: btoa("admin"),         // base64 of "admin"
-      password: btoa("admin"),         // base64 of "admin"
-      role: "admin",
-      name: "Administrador Oscuro",
-      email: "admin@darkmetalstore.com",
-      avatar: "👑",
-      joinDate: "2020-01-01"
-    },
-    {
-      id: 2,
-      username: btoa("usuario"),
-      password: btoa("1234"),
-      role: "user",
-      name: "Alma Perdida",
-      email: "usuario@darkmetalstore.com",
-      avatar: "🖤",
-      joinDate: "2023-06-15"
-    }
-  ];
-
-  return {
-    validate(user, pass) {
-      return _users.find(
-        u => atob(u.username) === user && atob(u.password) === pass
-      ) || null;
-    },
-    getById(id) {
-      return _users.find(u => u.id === id) || null;
-    }
-  };
-})();
-
-// ================================================
-// SESSION MANAGER
-// ================================================
-const Session = {
-  KEY: "dms_session",
-
-  set(user) {
-    const payload = { id: user.id, role: user.role, name: user.name, avatar: user.avatar, email: user.email, joinDate: user.joinDate };
-    sessionStorage.setItem(this.KEY, JSON.stringify(payload));
+/* ─── PRODUCT DATABASE ─── */
+const PRODUCTS = [
+  // MERCH (4)
+  {
+    id: 1, cat: 'merch', name: 'Velvet Dread Coat',
+    price: 3800,
+    desc: 'Floor-length velvet overcoat in obsidian black with blood-red satin lining and antiqued silver buttons.',
+    img: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=600&q=80'
+  },
+  {
+    id: 2, cat: 'merch', name: 'Shadow Lace Corset',
+    price: 1950,
+    desc: 'Victorian-inspired lace corset with boning channels and adjustable crimson ribbon ties.',
+    img: 'https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80'
+  },
+  {
+    id: 3, cat: 'merch', name: 'Nocturne Poet Shirt',
+    price: 1200,
+    desc: 'Billowing white cotton shirt with deep ruched cuffs and a dramatic open collar. Gothic romance in fabric.',
+    img: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=600&q=80'
+  },
+  {
+    id: 4, cat: 'merch', name: 'Bloodmoon Trousers',
+    price: 1650,
+    desc: 'Wide-leg tailored trousers in charcoal herringbone with a high waist and bone-carved buttons.',
+    img: 'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&q=80'
   },
 
-  get() {
-    try {
-      const raw = sessionStorage.getItem(this.KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+  // MUSIC (4)
+  {
+    id: 5, cat: 'music', name: 'Covenant — Abyss (180g Vinyl)',
+    price: 890,
+    desc: 'Double gatefold 180-gram pressing of the landmark gothic synth opus. Deep red translucent wax.',
+    img: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=600&q=80'
+  },
+  {
+    id: 6, cat: 'music', name: 'Eternal Darkness — Requiem (CD)',
+    price: 420,
+    desc: 'Special edition CD in a hard-cover digibook with 32-page booklet and embossed silver cover art.',
+    img: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80'
+  },
+  {
+    id: 7, cat: 'music', name: 'The Séance Tapes (Cassette Box)',
+    price: 650,
+    desc: 'Limited box set of 3 cassettes with original field recordings from abandoned cathedrals. Numbered.',
+    img: 'https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?w=600&q=80'
+  },
+  {
+    id: 8, cat: 'music', name: 'Shadows Eternal — Anthology (5xLP)',
+    price: 2400,
+    desc: 'Five-disc anthology spanning the legendary 1987–2003 discography. Pressed on black and silver vinyl.',
+    img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80'
   },
 
-  clear() {
-    sessionStorage.removeItem(this.KEY);
+  // ACCESSORIES (4)
+  {
+    id: 9, cat: 'accessories', name: 'Obsidian Coffin Ring',
+    price: 780,
+    desc: 'Sterling silver ring set with a hand-cut obsidian cabochon in a miniature coffin bezel. Sizes 5–12.',
+    img: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=600&q=80'
+  },
+  {
+    id: 10, cat: 'accessories', name: 'Vampire Choker Necklace',
+    price: 560,
+    desc: 'Black velvet choker with a drop pendant of blood-red garnet encased in oxidized silver claws.',
+    img: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80'
+  },
+  {
+    id: 11, cat: 'accessories', name: 'Mourning Brooch (Skull)',
+    price: 490,
+    desc: 'Victorian mourning-style brooch. Hand-cast skull in pewter with jet glass eyes. Pin closure.',
+    img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=600&q=80'
+  },
+  {
+    id: 12, cat: 'accessories', name: 'Grimoire Leather Wallet',
+    price: 840,
+    desc: 'Full-grain black leather bifold wallet tooled with occult sigils. Hand-stitched in crimson thread.',
+    img: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80'
   },
 
-  isLoggedIn() {
-    return this.get() !== null;
+  // EXTRAS (4)
+  {
+    id: 13, cat: 'extras', name: 'The Book of Shadows (Grimoire)',
+    price: 1100,
+    desc: 'Hand-bound blank grimoire in aged leather with brass clasps. 256 pages of aged parchment paper.',
+    img: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80'
   },
-
-  isAdmin() {
-    const s = this.get();
-    return s && s.role === "admin";
+  {
+    id: 14, cat: 'extras', name: 'Cathedral Candle Set',
+    price: 620,
+    desc: 'Set of 6 hand-poured beeswax pillar candles in varying heights. Scented with dark amber and incense.',
+    img: 'https://images.unsplash.com/photo-1603204077779-bed963ea7d0e?w=600&q=80'
+  },
+  {
+    id: 15, cat: 'extras', name: 'Tarot of the Undead (78-Card Deck)',
+    price: 950,
+    desc: 'Original gothic tarot deck illustrated by Romanian artist Mihaela Sorescu. Includes velvet drawstring bag.',
+    img: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&q=80'
+  },
+  {
+    id: 16, cat: 'extras', name: 'Pendulum of the Crypt',
+    price: 380,
+    desc: 'Antique-style brass pendulum with a black tourmaline point. Used for divination and ritual ceremony.',
+    img: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=600&q=80'
   }
-};
+];
 
-// ================================================
-// ROUTE GUARD
-// ================================================
-const RouteGuard = {
-  // Pages that require login
-  PROTECTED: ["perfil.html", "carrito.html"],
-  // Pages only for admin
-  ADMIN_ONLY: [],
-  // Redirect target if not logged in
-  LOGIN_PAGE: "login.html",
+/* ─── STATE ─── */
+let cart = JSON.parse(localStorage.getItem('cv_cart') || '[]');
+let currentFilter = 'all';
 
-  check() {
-    const path = window.location.pathname;
-    const page = path.split("/").pop() || "index.html";
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+function isAuthenticated() {
+  return !!localStorage.getItem('cv_user');
+}
 
-    // Protect routes
-    if (this.PROTECTED.some(p => page.includes(p))) {
-      if (!Session.isLoggedIn()) {
-        window.location.replace(this.LOGIN_PAGE);
-        return false;
-      }
-    }
-
-    // Redirect logged-in users away from login page
-    if (page.includes("login.html") && Session.isLoggedIn()) {
-      window.location.replace("../index.html");
-      return false;
-    }
-
-    return true;
+function init() {
+  if (isAuthenticated()) {
+    showMainSite();
+  } else {
+    document.getElementById('gate').style.display = 'flex';
+    document.getElementById('main-site').classList.add('hidden');
   }
-};
+}
 
-// ================================================
-// PRODUCT DATABASE (Products stored in closure)
-// ================================================
-const ProductDB = (() => {
-  let _products = [
-    {
-      id: 1,
-      band: "Metallica",
-      name: "Master of Puppets - CD Edición Deluxe",
-      desc: "El álbum definitivo del thrash metal. Edición remasterizada con libreto de 40 páginas y arte expandido.",
-      price: 349,
-      category: "cd",
-      img: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80",
-      stock: 15,
-      rating: 5
-    },
-    {
-      id: 2,
-      band: "Black Sabbath",
-      name: "Paranoid - Vinilo Rojo 180g",
-      desc: "Progenitor del heavy metal. Prensado en vinilo rojo sangre de 180 gramos, audiófilo y coleccionable.",
-      price: 599,
-      category: "vinyl",
-      img: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80",
-      stock: 8,
-      rating: 5
-    },
-    {
-      id: 3,
-      band: "Iron Maiden",
-      name: "Powerslave - Playera Eddie Vintage",
-      desc: "Diseño vintage del icónico Eddie de Iron Maiden. 100% algodón peinado, serigrafía de alta calidad.",
-      price: 450,
-      category: "merch",
-      img: "https://images.unsplash.com/photo-1520975867040-1f7fead66882?w=400&q=80",
-      stock: 25,
-      rating: 4
-    },
-    {
-      id: 4,
-      band: "Slayer",
-      name: "Reign in Blood - CD Remasterizado",
-      desc: "Treinta y un minutos de brutalidad pura. El álbum más rápido y agresivo del thrash metal, remasterizado.",
-      price: 289,
-      category: "cd",
-      img: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&q=80",
-      stock: 12,
-      rating: 5
-    },
-    {
-      id: 5,
-      band: "Dimmu Borgir",
-      name: "Puerta de Infierno - Poster Enmarcado",
-      desc: "Arte oscuro oficial de Dimmu Borgir. Impresión giclée sobre papel de archivo, marco negro lacado.",
-      price: 799,
-      category: "art",
-      img: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80",
-      stock: 5,
-      rating: 4
-    },
-    {
-      id: 6,
-      band: "Rammstein",
-      name: "Mutter - CD Box Set",
-      desc: "Box set coleccionable del álbum más icónico del Neue Deutsche Härte. Incluye CD, DVD y booklet exclusivo.",
-      price: 899,
-      category: "cd",
-      img: "https://images.unsplash.com/photo-1511735111819-9a3efd16f078?w=400&q=80",
-      stock: 7,
-      rating: 5
-    },
-    {
-      id: 7,
-      band: "Cradle of Filth",
-      name: "Cornamenta de Cernunnos - Pin Set",
-      desc: "Colección de 5 pines esmaltados con motivos célticos oscuros. Presentados en caja de terciopelo negro.",
-      price: 199,
-      category: "merch",
-      img: "https://images.unsplash.com/photo-1614117079476-c4e636aca879?w=400&q=80",
-      stock: 30,
-      rating: 4
-    },
-    {
-      id: 8,
-      band: "Behemoth",
-      name: "Satanist - Vinilo Transparente",
-      desc: "El opus magnum del black/death metal polaco. Vinilo transparente edición limitada con arte interior extendido.",
-      price: 649,
-      category: "vinyl",
-      img: "https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=400&q=80",
-      stock: 4,
-      rating: 5
-    },
-    {
-      id: 9,
-      band: "Tool",
-      name: "Lateralus - Edición 20 Aniversario",
-      desc: "El viaje psicodélico definitivo. Edición de aniversario con material inédito y libro de arte de Alex Grey.",
-      price: 749,
-      category: "cd",
-      img: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&q=80",
-      stock: 6,
-      rating: 5
-    },
-    {
-      id: 10,
-      band: "Ghost",
-      name: "Ritual de Papa - Capa Ceremonial",
-      desc: "Réplica oficial de la capa ceremonial de Papa Emeritus. Tela de alta calidad, broches de metal. Talla única.",
-      price: 1299,
-      category: "merch",
-      img: "https://images.unsplash.com/photo-1551854838-212c9a8f0700?w=400&q=80",
-      stock: 3,
-      rating: 5
-    },
-    {
-      id: 11,
-      band: "Marilyn Manson",
-      name: "Antichrist Superstar - CD Doble",
-      desc: "La ópera rock más transgresora del rock alternativo. Doble CD en digipack con arte de P.R. Giger.",
-      price: 399,
-      category: "cd",
-      img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80",
-      stock: 10,
-      rating: 4
-    },
-    {
-      id: 12,
-      band: "Type O Negative",
-      name: "Bloody Kisses - Vinilo Doble Negro",
-      desc: "El gótico más melancólico y hermoso del doom metal. Doble vinilo negro con portada desplegable.",
-      price: 699,
-      category: "vinyl",
-      img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
-      stock: 9,
-      rating: 5
-    }
-  ];
+function showMainSite() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('main-site').classList.remove('hidden');
+  renderProducts('all');
+  updateCartCount();
+  initScrollObserver();
+  initNavbarScroll();
+}
 
-  let _nextId = 13;
+function switchTab(tab) {
+  document.querySelectorAll('.gate-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.gate-form').forEach(f => f.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('form-' + tab).classList.add('active');
+}
 
-  return {
-    getAll() { return [..._products]; },
-    getById(id) { return _products.find(p => p.id === id) || null; },
-    getByCategory(cat) {
-      if (!cat || cat === "all") return [..._products];
-      return _products.filter(p => p.category === cat);
-    },
-    search(term) {
-      const t = term.toLowerCase();
-      return _products.filter(p =>
-        p.name.toLowerCase().includes(t) ||
-        p.band.toLowerCase().includes(t) ||
-        p.desc.toLowerCase().includes(t)
-      );
-    },
-    add(product) {
-      const newP = { ...product, id: _nextId++ };
-      _products.push(newP);
-      return newP;
-    },
-    remove(id) {
-      const idx = _products.findIndex(p => p.id === id);
-      if (idx !== -1) { _products.splice(idx, 1); return true; }
-      return false;
-    },
-    update(id, data) {
-      const idx = _products.findIndex(p => p.id === id);
-      if (idx !== -1) { _products[idx] = { ..._products[idx], ...data }; return _products[idx]; }
-      return null;
-    }
-  };
-})();
+function handleLogin() {
+  const email    = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl    = document.getElementById('login-error');
+  errEl.classList.add('hidden');
 
-// ================================================
-// CART MODULE
-// ================================================
-const Cart = {
-  KEY: "dms_cart",
-
-  getItems() {
-    try {
-      return JSON.parse(localStorage.getItem(this.KEY)) || [];
-    } catch { return []; }
-  },
-
-  save(items) {
-    localStorage.setItem(this.KEY, JSON.stringify(items));
-    this.updateBadge();
-  },
-
-  add(productId, qty = 1) {
-    const items = this.getItems();
-    const product = ProductDB.getById(productId);
-    if (!product) return;
-
-    const existing = items.find(i => i.id === productId);
-    if (existing) {
-      existing.qty = Math.min(existing.qty + qty, product.stock);
-    } else {
-      items.push({ id: productId, qty, name: product.name, price: product.price, img: product.img, band: product.band });
-    }
-    this.save(items);
-    Toast.show("🖤 Añadido al carrito", product.name);
-  },
-
-  remove(productId) {
-    const items = this.getItems().filter(i => i.id !== productId);
-    this.save(items);
-  },
-
-  updateQty(productId, qty) {
-    const items = this.getItems();
-    const item = items.find(i => i.id === productId);
-    if (item) {
-      if (qty <= 0) { this.remove(productId); return; }
-      item.qty = qty;
-      this.save(items);
-    }
-  },
-
-  clear() {
-    localStorage.removeItem(this.KEY);
-    this.updateBadge();
-  },
-
-  getTotal() {
-    return this.getItems().reduce((sum, i) => sum + i.price * i.qty, 0);
-  },
-
-  getCount() {
-    return this.getItems().reduce((sum, i) => sum + i.qty, 0);
-  },
-
-  updateBadge() {
-    const badges = document.querySelectorAll(".cart-count");
-    const count = this.getCount();
-    badges.forEach(b => {
-      b.textContent = count;
-      b.style.display = count > 0 ? "inline-flex" : "none";
-    });
+  if (!email || !password) {
+    errEl.textContent = 'Both fields are required.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
-
-// ================================================
-// TOAST NOTIFICATION
-// ================================================
-const Toast = {
-  show(title, message, type = "success") {
-    const container = document.getElementById("toastContainer") ||
-      (() => {
-        const el = document.createElement("div");
-        el.id = "toastContainer";
-        el.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;";
-        document.body.appendChild(el);
-        return el;
-      })();
-
-    const toast = document.createElement("div");
-    toast.style.cssText = `
-      padding:14px 18px;border-radius:10px;min-width:240px;max-width:300px;
-      background:linear-gradient(135deg,rgba(20,0,40,.97),rgba(5,0,15,.99));
-      border:1px solid rgba(139,0,0,.5);color:#d4c5e2;
-      font-family:'Rajdhani',sans-serif;font-size:.9rem;
-      box-shadow:0 8px 32px rgba(0,0,0,.7),0 0 15px rgba(220,20,60,.3);
-      animation:slideInToast .3s ease;backdrop-filter:blur(20px);
-    `;
-
-    toast.innerHTML = `
-      <div style="font-family:'Cinzel',serif;font-size:.8rem;color:#DC143C;margin-bottom:4px;letter-spacing:.1em;">${title}</div>
-      <div>${message}</div>
-    `;
-
-    if (!document.getElementById("toastStyle")) {
-      const s = document.createElement("style");
-      s.id = "toastStyle";
-      s.textContent = `
-        @keyframes slideInToast{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
-        @keyframes slideOutToast{from{opacity:1;transform:none}to{opacity:0;transform:translateX(30px)}}
-      `;
-      document.head.appendChild(s);
-    }
-
-    container.appendChild(toast);
-    setTimeout(() => {
-      toast.style.animation = "slideOutToast .3s ease forwards";
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
+  if (!validateEmail(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
 
-// ================================================
-// NAVBAR UTILS
-// ================================================
-const NavbarUtils = {
-  init() {
-    this.updateCartBadge();
-    this.updateAuthState();
-    this.highlightCurrentPage();
-  },
+  const users = JSON.parse(localStorage.getItem('cv_users') || '[]');
+  const user  = users.find(u => u.email === email && u.password === password);
 
-  updateCartBadge() {
-    Cart.updateBadge();
-  },
-
-  updateAuthState() {
-    const session = Session.get();
-    const loginLinks = document.querySelectorAll(".nav-login-link");
-    const profileLinks = document.querySelectorAll(".nav-profile-link");
-    const logoutLinks = document.querySelectorAll(".nav-logout-link");
-    const adminLinks = document.querySelectorAll(".nav-admin-link");
-
-    if (session) {
-      loginLinks.forEach(el => el.style.display = "none");
-      profileLinks.forEach(el => el.style.display = "");
-      logoutLinks.forEach(el => el.style.display = "");
-      if (session.role === "admin") {
-        adminLinks.forEach(el => el.style.display = "");
-      }
-    } else {
-      loginLinks.forEach(el => el.style.display = "");
-      profileLinks.forEach(el => el.style.display = "none");
-      logoutLinks.forEach(el => el.style.display = "none");
-      adminLinks.forEach(el => el.style.display = "none");
-    }
-  },
-
-  highlightCurrentPage() {
-    const page = window.location.pathname.split("/").pop() || "index.html";
-    document.querySelectorAll(".nav-link-custom").forEach(link => {
-      const href = link.getAttribute("href") || "";
-      if (href.includes(page) || (page === "index.html" && href.endsWith("index.html"))) {
-        link.classList.add("active");
-      }
-    });
-  },
-
-  logout() {
-    Session.clear();
-    Toast.show("🕯️ Hasta la próxima", "Sesión cerrada correctamente");
-    setTimeout(() => { window.location.href = "../index.html"; }, 1200);
+  if (!user) {
+    errEl.textContent = 'Invalid credentials. Have you registered?';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
 
-// ================================================
-// PAGE: LOGIN
-// ================================================
-const LoginPage = {
-  init() {
-    const form = document.getElementById("loginForm");
-    if (!form) return;
+  localStorage.setItem('cv_user', JSON.stringify(user));
+  showMainSite();
+}
 
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const user = document.getElementById("loginUser").value.trim();
-      const pass = document.getElementById("loginPass").value;
-      const errorEl = document.getElementById("loginError");
+function handleRegister() {
+  const name     = document.getElementById('reg-name').value.trim();
+  const email    = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+  const errEl    = document.getElementById('reg-error');
+  errEl.classList.add('hidden');
 
-      errorEl.style.display = "none";
-
-      const account = _authStore.validate(user, pass);
-
-      if (account) {
-        Session.set(account);
-        Toast.show("🖤 Bienvenido", account.name);
-        setTimeout(() => {
-          window.location.href = "../index.html";
-        }, 1000);
-      } else {
-        errorEl.style.display = "block";
-        // shake animation
-        form.classList.add("shake");
-        setTimeout(() => form.classList.remove("shake"), 500);
-      }
-    });
-
-    // add shake style
-    if (!document.getElementById("shakeStyle")) {
-      const s = document.createElement("style");
-      s.id = "shakeStyle";
-      s.textContent = `@keyframes shake{0%,100%{transform:none}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}.shake{animation:shake .4s ease}`;
-      document.head.appendChild(s);
-    }
+  if (!name || !email || !password) {
+    errEl.textContent = 'All fields are required.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
-
-// ================================================
-// PAGE: CATALOG
-// ================================================
-const CatalogPage = {
-  currentCategory: "all",
-  searchTerm: "",
-
-  init() {
-    const grid = document.getElementById("productGrid");
-    if (!grid) return;
-
-    this.render();
-    this.bindCategoryPills();
-    this.bindSearch();
-  },
-
-  render() {
-    const grid = document.getElementById("productGrid");
-    let products = ProductDB.getByCategory(this.currentCategory);
-    if (this.searchTerm) {
-      products = products.filter(p => {
-        const t = this.searchTerm.toLowerCase();
-        return p.name.toLowerCase().includes(t) || p.band.toLowerCase().includes(t) || p.desc.toLowerCase().includes(t);
-      });
-    }
-
-    const isAdmin = Session.isAdmin();
-
-    if (products.length === 0) {
-      grid.innerHTML = `
-        <div class="col-12 text-center py-5">
-          <div style="font-size:4rem;margin-bottom:1rem;">🕸️</div>
-          <p style="font-family:'Cinzel',serif;color:var(--text-muted);">Ningún producto encontrado en las sombras...</p>
-        </div>`;
-      return;
-    }
-
-    grid.innerHTML = products.map((p, i) => `
-      <div class="col-sm-6 col-lg-4 col-xl-3 mb-4 fade-in-up" style="animation-delay:${i * 0.05}s">
-        <div class="product-card glass-card h-100">
-          <div class="product-img-wrapper">
-            <img src="${p.img}" alt="${p.name}" loading="lazy">
-            <div class="product-overlay"></div>
-            <span class="product-band-tag">${p.band}</span>
-            ${p.stock <= 5 ? `<span style="position:absolute;bottom:10px;right:10px;background:rgba(139,0,0,.8);padding:3px 8px;border-radius:3px;font-size:.65rem;font-family:'Cinzel',serif;color:var(--bone);">Últimas ${p.stock}</span>` : ''}
-          </div>
-          <div class="product-body d-flex flex-column">
-            <div class="stars mb-1">${'★'.repeat(p.rating)}${'☆'.repeat(5 - p.rating)}</div>
-            <div class="product-title">${p.name}</div>
-            <div class="product-desc flex-grow-1">${p.desc}</div>
-            <div class="d-flex align-items-center justify-content-between mt-auto">
-              <div class="product-price"><span class="currency">$</span>${p.price.toLocaleString()}</div>
-              <button class="btn-liquid btn-sm" onclick="Cart.add(${p.id})">
-                <i class="bi bi-cart-plus me-1"></i>Añadir
-              </button>
-            </div>
-            ${isAdmin ? `
-            <div class="d-flex gap-2 mt-2">
-              <button class="btn-liquid btn-liquid-outline flex-fill" style="font-size:.7rem;padding:6px" onclick="AdminPanel.editProduct(${p.id})">
-                <i class="bi bi-pencil me-1"></i>Editar
-              </button>
-              <button class="btn-liquid flex-fill" style="font-size:.7rem;padding:6px;background:linear-gradient(135deg,#4a0020,#1a0008)" onclick="AdminPanel.deleteProduct(${p.id})">
-                <i class="bi bi-trash me-1"></i>Eliminar
-              </button>
-            </div>` : ''}
-          </div>
-        </div>
-      </div>
-    `).join("");
-  },
-
-  bindCategoryPills() {
-    document.querySelectorAll(".cat-pill").forEach(pill => {
-      pill.addEventListener("click", () => {
-        document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
-        pill.classList.add("active");
-        this.currentCategory = pill.dataset.cat;
-        this.render();
-      });
-    });
-  },
-
-  bindSearch() {
-    const input = document.getElementById("catalogSearch");
-    if (!input) return;
-    input.addEventListener("input", () => {
-      this.searchTerm = input.value;
-      this.render();
-    });
+  if (!validateEmail(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
-
-// ================================================
-// ADMIN PANEL
-// ================================================
-const AdminPanel = {
-  init() {
-    const panel = document.getElementById("adminPanel");
-    if (!panel) return;
-    if (!Session.isAdmin()) { panel.style.display = "none"; return; }
-    panel.style.display = "block";
-    this.bindAddForm();
-  },
-
-  bindAddForm() {
-    const form = document.getElementById("addProductForm");
-    if (!form) return;
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const product = {
-        band: document.getElementById("pBand").value.trim(),
-        name: document.getElementById("pName").value.trim(),
-        desc: document.getElementById("pDesc").value.trim(),
-        price: parseInt(document.getElementById("pPrice").value),
-        category: document.getElementById("pCategory").value,
-        img: document.getElementById("pImg").value.trim() || "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80",
-        stock: parseInt(document.getElementById("pStock").value) || 10,
-        rating: 5
-      };
-
-      if (!product.band || !product.name || !product.price) {
-        Toast.show("⚠️ Error", "Completa los campos requeridos"); return;
-      }
-
-      ProductDB.add(product);
-      form.reset();
-      CatalogPage.render();
-      Toast.show("✅ Producto añadido", product.name);
-
-      // collapse admin panel
-      const collapse = document.getElementById("adminCollapse");
-      if (collapse) {
-        const bsCollapse = bootstrap.Collapse.getInstance(collapse);
-        if (bsCollapse) bsCollapse.hide();
-      }
-    });
-  },
-
-  deleteProduct(id) {
-    if (!Session.isAdmin()) return;
-    const product = ProductDB.getById(id);
-    if (!product) return;
-
-    if (confirm(`¿Eliminar "${product.name}" del catálogo oscuro?`)) {
-      ProductDB.remove(id);
-      // also remove from cart
-      Cart.remove(id);
-      CatalogPage.render();
-      Toast.show("🗑️ Eliminado", product.name);
-    }
-  },
-
-  editProduct(id) {
-    if (!Session.isAdmin()) return;
-    const p = ProductDB.getById(id);
-    if (!p) return;
-
-    // Populate modal
-    document.getElementById("editId").value = p.id;
-    document.getElementById("editBand").value = p.band;
-    document.getElementById("editName").value = p.name;
-    document.getElementById("editDesc").value = p.desc;
-    document.getElementById("editPrice").value = p.price;
-    document.getElementById("editStock").value = p.stock;
-    document.getElementById("editCategory").value = p.category;
-    document.getElementById("editImg").value = p.img;
-
-    const modal = new bootstrap.Modal(document.getElementById("editModal"));
-    modal.show();
-  },
-
-  saveEdit() {
-    const id = parseInt(document.getElementById("editId").value);
-    const updated = {
-      band: document.getElementById("editBand").value.trim(),
-      name: document.getElementById("editName").value.trim(),
-      desc: document.getElementById("editDesc").value.trim(),
-      price: parseInt(document.getElementById("editPrice").value),
-      stock: parseInt(document.getElementById("editStock").value),
-      category: document.getElementById("editCategory").value,
-      img: document.getElementById("editImg").value.trim()
-    };
-    ProductDB.update(id, updated);
-    CatalogPage.render();
-    bootstrap.Modal.getInstance(document.getElementById("editModal")).hide();
-    Toast.show("✅ Actualizado", updated.name);
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
 
-// ================================================
-// PAGE: CART
-// ================================================
-const CartPage = {
-  init() {
-    const wrapper = document.getElementById("cartWrapper");
-    if (!wrapper) return;
-    this.render();
-  },
-
-  render() {
-    const wrapper = document.getElementById("cartWrapper");
-    const items = Cart.getItems();
-
-    if (items.length === 0) {
-      wrapper.innerHTML = `
-        <div class="text-center py-5">
-          <div style="font-size:5rem;margin-bottom:1.5rem;">🛒</div>
-          <h3 style="font-family:'Cinzel',serif;color:var(--text-muted);">Tu carrito está vacío</h3>
-          <p style="color:var(--text-muted);">Las almas perdidas no cargan nada...</p>
-          <a href="catalogo.html" class="btn-liquid mt-3">Ver Catálogo</a>
-        </div>`;
-      document.getElementById("cartSummary").style.display = "none";
-      return;
-    }
-
-    document.getElementById("cartSummary").style.display = "block";
-
-    wrapper.innerHTML = items.map(item => `
-      <div class="cart-item-row d-flex gap-3 align-items-center">
-        <img src="${item.img}" alt="${item.name}" class="cart-item-img">
-        <div class="flex-grow-1">
-          <div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--bone);">${item.name}</div>
-          <div style="font-size:.75rem;color:var(--text-muted);margin-top:2px;">${item.band}</div>
-          <div style="color:var(--crimson);font-family:'Cinzel Decorative',serif;margin-top:4px;">$${item.price.toLocaleString()}</div>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-          <button class="btn-liquid" style="padding:4px 10px;font-size:.8rem" onclick="CartPage.changeQty(${item.id}, -1)">−</button>
-          <input type="number" class="qty-input" value="${item.qty}" min="1" onchange="CartPage.setQty(${item.id}, this.value)">
-          <button class="btn-liquid" style="padding:4px 10px;font-size:.8rem" onclick="CartPage.changeQty(${item.id}, 1)">+</button>
-        </div>
-        <div style="font-family:'Cinzel Decorative',serif;color:var(--bone);min-width:80px;text-align:right;">
-          $${(item.price * item.qty).toLocaleString()}
-        </div>
-        <button onclick="CartPage.removeItem(${item.id})" style="background:none;border:none;color:var(--crimson);font-size:1.1rem;cursor:pointer;padding:4px;">
-          <i class="bi bi-x-circle"></i>
-        </button>
-      </div>
-    `).join("");
-
-    // Update totals
-    const total = Cart.getTotal();
-    document.getElementById("cartSubtotal").textContent = `$${total.toLocaleString()}`;
-    document.getElementById("cartShipping").textContent = total >= 1000 ? "Gratis" : "$99";
-    const shipping = total >= 1000 ? 0 : 99;
-    document.getElementById("cartTotal").textContent = `$${(total + shipping).toLocaleString()}`;
-  },
-
-  changeQty(id, delta) {
-    const items = Cart.getItems();
-    const item = items.find(i => i.id === id);
-    if (!item) return;
-    Cart.updateQty(id, item.qty + delta);
-    this.render();
-  },
-
-  setQty(id, val) {
-    Cart.updateQty(id, parseInt(val) || 1);
-    this.render();
-  },
-
-  removeItem(id) {
-    Cart.remove(id);
-    this.render();
-    Toast.show("🗑️ Eliminado", "Producto removido del carrito");
-  },
-
-  checkout() {
-    if (!Session.isLoggedIn()) {
-      Toast.show("⚠️ Requiere sesión", "Inicia sesión para continuar");
-      return;
-    }
-    const modal = new bootstrap.Modal(document.getElementById("checkoutModal"));
-    modal.show();
-  },
-
-  confirmOrder() {
-    Cart.clear();
-    bootstrap.Modal.getInstance(document.getElementById("checkoutModal")).hide();
-    setTimeout(() => {
-      this.render();
-      Toast.show("✅ ¡Orden confirmada!", "Tu pedido ha sido enviado a las sombras");
-    }, 400);
+  const users = JSON.parse(localStorage.getItem('cv_users') || '[]');
+  if (users.find(u => u.email === email)) {
+    errEl.textContent = 'An account with this email already exists.';
+    errEl.classList.remove('hidden');
+    return;
   }
-};
 
-// ================================================
-// PAGE: PROFILE
-// ================================================
-const ProfilePage = {
-  init() {
-    const wrapper = document.getElementById("profileWrapper");
-    if (!wrapper) return;
+  const newUser = { name, email, password };
+  users.push(newUser);
+  localStorage.setItem('cv_users', JSON.stringify(users));
+  localStorage.setItem('cv_user', JSON.stringify(newUser));
+  showMainSite();
+}
 
-    const session = Session.get();
-    if (!session) return;
+function handleLogout() {
+  localStorage.removeItem('cv_user');
+  cart = [];
+  saveCart();
+  location.reload();
+}
 
-    document.getElementById("profileName").textContent = session.name;
-    document.getElementById("profileEmail").textContent = session.email;
-    document.getElementById("profileAvatar").textContent = session.avatar;
-    document.getElementById("profileRole").textContent = session.role === "admin" ? "Administrador" : "Seguidor";
-    document.getElementById("profileJoin").textContent = session.joinDate;
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
-    const cartItems = Cart.getItems();
-    document.getElementById("profileCartCount").textContent = cartItems.length;
-    document.getElementById("profileCartTotal").textContent = `$${Cart.getTotal().toLocaleString()}`;
-
-    if (session.role === "admin") {
-      document.getElementById("adminIndicator").style.display = "block";
-    }
-  }
-};
-
-// ================================================
-// INIT
-// ================================================
-document.addEventListener("DOMContentLoaded", () => {
-  // Security check
-  RouteGuard.check();
-
-  // Init navbar
-  NavbarUtils.init();
-
-  // Init pages
-  LoginPage.init();
-  CatalogPage.init();
-  AdminPanel.init();
-  CartPage.init();
-  ProfilePage.init();
-
-  // Logout button
-  document.querySelectorAll(".logout-btn").forEach(btn => {
-    btn.addEventListener("click", e => { e.preventDefault(); NavbarUtils.logout(); });
+/* ═══════════════════════════════════════════
+   NAVBAR & SCROLL
+═══════════════════════════════════════════ */
+function initNavbarScroll() {
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
   });
-});
+}
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  menu.classList.toggle('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   INTERSECTION OBSERVER (reveal animations)
+═══════════════════════════════════════════ */
+function initScrollObserver() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+  );
+
+  document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCTS
+═══════════════════════════════════════════ */
+function renderProducts(cat) {
+  const grid = document.getElementById('products-grid');
+  const list = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
+  grid.innerHTML = list.map(productCardHTML).join('');
+}
+
+function filterProducts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+function filterCategory(cat) {
+  document.getElementById('bestsellers').scrollIntoView({ behavior: 'smooth' });
+  setTimeout(() => {
+    const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
+    if (btn) filterProducts(cat, btn);
+  }, 600);
+}
+
+function productCardHTML(p) {
+  const catLabels = { merch: 'Merch', music: "CD's & Vinyls", accessories: 'Accessories', extras: 'Extras' };
+  return `
+    <div class="product-card" data-id="${p.id}">
+      <div class="product-card-img">
+        <img src="${p.img}" alt="${p.name}" loading="lazy" />
+        <div class="product-quick-add">
+          <button onclick="addToCart(${p.id})">Add to Vault</button>
+        </div>
+      </div>
+      <div class="product-card-info">
+        <div class="product-card-cat">${catLabels[p.cat]}</div>
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-desc">${p.desc}</div>
+        <div class="product-card-price">$${p.price.toLocaleString('es-MX')} MXN</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ─── LIVE SEARCH ─── */
+function liveSearch(query) {
+  const overlay = document.getElementById('search-results');
+  const grid    = document.getElementById('search-results-grid');
+  const q       = query.trim().toLowerCase();
+
+  if (!q) {
+    overlay.classList.add('hidden');
+    return;
+  }
+
+  const results = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.desc.toLowerCase().includes(q) ||
+    p.cat.toLowerCase().includes(q)
+  );
+
+  overlay.classList.remove('hidden');
+  grid.innerHTML = results.length
+    ? results.map(productCardHTML).join('')
+    : '<p style="color:var(--silver);font-style:italic;font-family:var(--font-serif);font-size:1.25rem;grid-column:1/-1;padding:2rem 0">No artifacts found in the vault.</p>';
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').classList.add('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   CART
+═══════════════════════════════════════════ */
+function saveCart() {
+  localStorage.setItem('cv_cart', JSON.stringify(cart));
+}
+
+function addToCart(id) {
+  const product = PRODUCTS.find(p => p.id === id);
+  if (!product) return;
+
+  const item = cart.find(i => i.id === id);
+  if (item) {
+    item.qty += 1;
+  } else {
+    cart.push({ id, qty: 1 });
+  }
+
+  saveCart();
+  updateCartCount();
+  renderCart();
+  openCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i => i.id !== id);
+  saveCart();
+  updateCartCount();
+  renderCart();
+}
+
+function updateQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  saveCart();
+  updateCartCount();
+  renderCart();
+}
+
+function updateCartCount() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cart-count').textContent = count;
+}
+
+function getCartTotal() {
+  return cart.reduce((s, i) => {
+    const p = PRODUCTS.find(p => p.id === i.id);
+    return s + (p ? p.price * i.qty : 0);
+  }, 0);
+}
+
+function renderCart() {
+  const el    = document.getElementById('cart-items');
+  const empty = document.getElementById('cart-empty');
+  const footer= document.getElementById('cart-footer');
+  const total = document.getElementById('cart-total-price');
+
+  if (!cart.length) {
+    el.innerHTML = '';
+    empty.classList.remove('hidden');
+    footer.classList.add('hidden');
+    return;
+  }
+
+  empty.classList.add('hidden');
+  footer.classList.remove('hidden');
+  total.textContent = '$' + getCartTotal().toLocaleString('es-MX') + ' MXN';
+
+  el.innerHTML = cart.map(item => {
+    const p = PRODUCTS.find(pr => pr.id === item.id);
+    if (!p) return '';
+    return `
+      <div class="cart-item">
+        <div class="cart-item-img">
+          <img src="${p.img}" alt="${p.name}" />
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${p.name}</div>
+          <div class="cart-item-price">$${p.price.toLocaleString('es-MX')} MXN</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="updateQty(${p.id}, -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty(${p.id}, 1)">+</button>
+            <button class="cart-item-remove" onclick="removeFromCart(${p.id})">Remove</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openCart() {
+  renderCart();
+  document.getElementById('cart-sidebar').classList.add('active');
+  document.getElementById('cart-overlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function toggleCart() {
+  const sidebar = document.getElementById('cart-sidebar');
+  const overlay = document.getElementById('cart-overlay');
+  const isOpen  = sidebar.classList.contains('active');
+
+  if (isOpen) {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  } else {
+    openCart();
+  }
+}
+
+/* ═══════════════════════════════════════════
+   CHECKOUT
+═══════════════════════════════════════════ */
+function goToCheckout() {
+  toggleCart();
+  setTimeout(() => {
+    document.getElementById('checkout-page').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    renderCheckoutSummary();
+  }, 300);
+}
+
+function closeCheckout() {
+  document.getElementById('checkout-page').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function renderCheckoutSummary() {
+  const list = document.getElementById('checkout-items-list');
+  const sub  = document.getElementById('ck-subtotal');
+  const tot  = document.getElementById('ck-total');
+  const subtotal = getCartTotal();
+
+  list.innerHTML = cart.map(item => {
+    const p = PRODUCTS.find(pr => pr.id === item.id);
+    if (!p) return '';
+    return `
+      <div class="ck-item">
+        <div class="ck-item-img"><img src="${p.img}" alt="${p.name}" /></div>
+        <div class="ck-item-info">
+          <div class="ck-item-name">${p.name}</div>
+          <div class="ck-item-qty">Qty: ${item.qty}</div>
+        </div>
+        <div class="ck-item-price">$${(p.price * item.qty).toLocaleString('es-MX')}</div>
+      </div>
+    `;
+  }).join('');
+
+  sub.textContent = '$' + subtotal.toLocaleString('es-MX') + ' MXN';
+  tot.textContent = '$' + (subtotal + 150).toLocaleString('es-MX') + ' MXN';
+
+  const user = JSON.parse(localStorage.getItem('cv_user') || '{}');
+  if (user.email) document.getElementById('ck-email').value = user.email;
+  if (user.name)  document.getElementById('ck-name').value  = user.name;
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 16);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+}
+
+function formatExpiry(input) {
+  let v = input.value.replace(/\D/g, '').substring(0, 4);
+  if (v.length >= 2) v = v.substring(0, 2) + ' / ' + v.substring(2);
+  input.value = v;
+}
+
+function processOrder() {
+  const errEl = document.getElementById('checkout-error');
+  errEl.classList.add('hidden');
+
+  const name   = document.getElementById('ck-name').value.trim();
+  const email  = document.getElementById('ck-email').value.trim();
+  const addr   = document.getElementById('ck-address').value.trim();
+  const city   = document.getElementById('ck-city').value.trim();
+  const zip    = document.getElementById('ck-zip').value.trim();
+  const card   = document.getElementById('ck-card').value.replace(/\s/g, '');
+  const expiry = document.getElementById('ck-expiry').value.trim();
+  const cvv    = document.getElementById('ck-cvv').value.trim();
+
+  if (!name || !email || !addr || !city || !zip) {
+    errEl.textContent = 'Please complete all shipping fields.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!validateEmail(email)) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (card.length < 16) {
+    errEl.textContent = 'Please enter a valid 16-digit card number.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (!expiry.includes('/') || expiry.replace(/\s/g, '').length < 5) {
+    errEl.textContent = 'Please enter a valid expiry date (MM / YY).';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (cvv.length < 3) {
+    errEl.textContent = 'Please enter a valid CVV.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const orderId = 'CVN-' + Date.now().toString(36).toUpperCase();
+  showOrderSuccess(orderId, name, city);
+}
+
+function showOrderSuccess(orderId, name, city) {
+  closeCheckout();
+  const total = getCartTotal() + 150;
+
+  const receiptEl = document.getElementById('receipt');
+  receiptEl.innerHTML = `
+    <h4>Order Receipt</h4>
+    ${cart.map(item => {
+      const p = PRODUCTS.find(pr => pr.id === item.id);
+      return p ? `<div class="receipt-row"><span>${p.name} ×${item.qty}</span><span>$${(p.price * item.qty).toLocaleString('es-MX')} MXN</span></div>` : '';
+    }).join('')}
+    <div class="receipt-row"><span>Shipping</span><span>$150 MXN</span></div>
+    <div class="receipt-total"><span>Total Sealed</span><span>$${total.toLocaleString('es-MX')} MXN</span></div>
+    <span class="receipt-id">Order ${orderId} · Dispatched to ${city}</span>
+  `;
+
+  document.getElementById('order-success').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  cart = [];
+  saveCart();
+  updateCartCount();
+}
+
+function closeSuccess() {
+  document.getElementById('order-success').classList.add('hidden');
+  document.body.style.overflow = '';
+  renderProducts(currentFilter);
+}
+
+/* ─── FAQ ─── */
+function toggleFaq(btn) {
+  const item   = btn.parentElement;
+  const answer = item.querySelector('.faq-answer');
+  const isOpen = btn.classList.contains('open');
+
+  document.querySelectorAll('.faq-question.open').forEach(q => {
+    q.classList.remove('open');
+    q.parentElement.querySelector('.faq-answer').classList.remove('open');
+  });
+
+  if (!isOpen) {
+    btn.classList.add('open');
+    answer.classList.add('open');
+  }
+}
+
+/* ─── NEWSLETTER ─── */
+function subscribeNewsletter() {
+  const input = document.querySelector('.footer-subscribe input');
+  const btn   = document.querySelector('.footer-subscribe button');
+  if (!input.value.trim() || !validateEmail(input.value)) {
+    input.style.borderColor = '#e05555';
+    setTimeout(() => input.style.borderColor = '', 2000);
+    return;
+  }
+  btn.textContent   = 'Welcomed';
+  btn.style.background = '#1a4a1a';
+  input.value = '';
+  input.placeholder = 'You have joined the order.';
+  setTimeout(() => {
+    btn.textContent = 'Join';
+    btn.style.background = '';
+    input.placeholder = 'Your email address';
+  }, 4000);
+}
+
+/* ─── BOOT ─── */
+document.addEventListener('DOMContentLoaded', init);

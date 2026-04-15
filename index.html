@@ -1,563 +1,546 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dark Metal Store — El Altar del Metal</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔</text></svg>">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/navbar.css">
-  <link rel="stylesheet" href="css/home.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Castlevania — Gothic Commerce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
-<!-- ======================================================
-     NAVBAR
-====================================================== -->
-<nav class="site-nav" role="navigation">
-  <div class="nav-left">
-    <!-- Logo slot: cambia el span por <img src="img/logo.png" alt="Logo"> -->
-    <div class="nav-logo-img placeholder">
-      <span style="font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--crimson);font-size:1.2rem;">✦</span>
+  <!-- ═══════════════════════════════════════════════════════════
+       GATE: Authentication Screen
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="gate" class="gate-overlay">
+    <div class="gate-bg"></div>
+    <div class="gate-content">
+      <div class="gate-brand">
+        <span class="gate-ornament">✦</span>
+        <h1 class="gate-title">Castlevania</h1>
+        <p class="gate-subtitle">An Invitation to the Dark</p>
+      </div>
+
+      <div class="gate-card">
+        <!-- Tabs -->
+        <div class="gate-tabs">
+          <button class="gate-tab active" id="tab-login" onclick="switchTab('login')">Enter</button>
+          <button class="gate-tab" id="tab-register" onclick="switchTab('register')">Initiate</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="form-login" class="gate-form active">
+          <p class="gate-form-label">Your credentials, if you please.</p>
+          <div class="gate-field">
+            <label>Email</label>
+            <input type="email" id="login-email" placeholder="name@domain.com" autocomplete="email" />
+          </div>
+          <div class="gate-field">
+            <label>Password</label>
+            <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+          </div>
+          <div id="login-error" class="gate-error hidden"></div>
+          <button class="btn-primary-dark" onclick="handleLogin()">Enter the Castle</button>
+        </div>
+
+        <!-- Register Form -->
+        <div id="form-register" class="gate-form">
+          <p class="gate-form-label">You have been chosen. Complete your covenant.</p>
+          <div class="gate-field">
+            <label>Full Name</label>
+            <input type="text" id="reg-name" placeholder="Vlad Dracul" autocomplete="name" />
+          </div>
+          <div class="gate-field">
+            <label>Email</label>
+            <input type="email" id="reg-email" placeholder="name@domain.com" autocomplete="email" />
+          </div>
+          <div class="gate-field">
+            <label>Password</label>
+            <input type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password" />
+          </div>
+          <div id="reg-error" class="gate-error hidden"></div>
+          <button class="btn-primary-dark" onclick="handleRegister()">Seal the Covenant</button>
+        </div>
+      </div>
+
+      <p class="gate-footer-text">All commerce within these walls is strictly between nobility.</p>
     </div>
-    <a href="index.html" class="nav-wordmark">
-      <span class="top-word">Dark Metal Store</span>
-      <span class="sub-word">El Altar del Metal Oscuro</span>
-    </a>
   </div>
 
-  <nav class="nav-center">
-    <a href="index.html" class="nav-link active">Inicio</a>
-    <span class="nav-sep"></span>
-    <a href="html/catalogo.html" class="nav-link">Catálogo</a>
-    <span class="nav-sep"></span>
-    <a href="html/nosotros.html" class="nav-link">Nosotros</a>
-    <span class="nav-sep"></span>
-    <a href="html/contacto.html" class="nav-link">Contacto</a>
-  </nav>
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN SITE
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="main-site" class="hidden">
 
-  <div class="nav-right">
-    <a href="html/login.html" class="nav-btn nav-login-link">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-      Entrar
-    </a>
-    <a href="html/perfil.html" class="nav-btn nav-profile-link" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Perfil
-    </a>
-    <button class="nav-btn nav-logout-link logout-btn" style="display:none">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Salir
-    </button>
-    <a href="html/carrito.html" class="nav-action" aria-label="Carrito">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="18" height="18" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span class="nav-cart-badge cart-count" style="display:none">0</span>
-    </a>
-    <button class="nav-toggle" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- Mobile Menu -->
-<div class="nav-mobile">
-  <a href="index.html" class="nav-link active">Inicio</a>
-  <a href="html/catalogo.html" class="nav-link">Catálogo</a>
-  <a href="html/nosotros.html" class="nav-link">Nosotros</a>
-  <a href="html/contacto.html" class="nav-link">Contacto</a>
-  <div class="nav-mobile-actions">
-    <a href="html/login.html" class="nav-btn nav-login-link">Entrar</a>
-    <a href="html/carrito.html" class="nav-btn">Carrito</a>
-  </div>
-</div>
-
-
-<!-- ======================================================
-     HERO
-====================================================== -->
-<section class="hero">
-  <div class="orb orb-a"></div>
-  <div class="orb orb-b"></div>
-  <div class="orb orb-c"></div>
-  <div class="hero-backdrop" data-parallax="0.15"></div>
-
-  <div class="container">
-    <div class="hero-body">
-      <p class="hero-pre">El santuario del metal oscuro</p>
-      <h1 class="hero-h1">Forjado<br>en <em>Oscuridad</em></h1>
-      <p class="hero-p">CDs, vinilos y merchandise oficial de las bandas más brutales del universo metálico. Desde el thrash más veloz hasta el doom más sepulcral.</p>
-      <div class="hero-cta">
-        <a href="html/catalogo.html" class="btn-liquid">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Explorar Catálogo
+    <!-- ─── NAVBAR ─── -->
+    <nav id="navbar" class="navbar-custom">
+      <div class="nav-inner">
+        <a href="#" class="nav-brand">
+          <span class="nav-brand-orn">✦</span>
+          <span>Castlevania</span>
         </a>
-        <a href="html/nosotros.html" class="btn-liquid btn-ghost">Nuestra Historia</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-scroll">
-    <div class="scroll-line"></div>
-    <span class="scroll-txt">Scroll</span>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     TICKER
-====================================================== -->
-<div class="ticker-wrap" aria-hidden="true">
-  <div class="ticker-track">
-    <span class="ticker-item">Metallica <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Black Sabbath <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Iron Maiden <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Slayer <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Rammstein <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Behemoth <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Tool <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Ghost <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Type O Negative <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Dimmu Borgir <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Metallica <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Black Sabbath <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Iron Maiden <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Slayer <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Rammstein <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Behemoth <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Tool <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Ghost <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Type O Negative <span class="ticker-dot"></span></span>
-    <span class="ticker-item">Dimmu Borgir <span class="ticker-dot"></span></span>
-  </div>
-</div>
-
-
-<!-- ======================================================
-     CATEGORIES
-====================================================== -->
-<section class="s-pad s-divide">
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">Nuestro dominio</span>
-      <h2>Explora por Categoría</h2>
-    </div>
-    <div class="cat-grid" data-stagger="70">
-      <a href="html/catalogo.html?cat=cd" class="cat-card reveal">
-        <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=600&q=70" alt="CDs" class="cat-img" loading="lazy">
-        <div class="cat-overlay"></div>
-        <div class="cat-label"><span class="cat-name">CDs</span><span class="cat-count">Ediciones especiales</span></div>
-      </a>
-      <a href="html/catalogo.html?cat=vinyl" class="cat-card reveal">
-        <img src="https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=600&q=70" alt="Vinilo" class="cat-img" loading="lazy">
-        <div class="cat-overlay"></div>
-        <div class="cat-label"><span class="cat-name">Vinilo</span><span class="cat-count">Prensados exclusivos</span></div>
-      </a>
-      <a href="html/catalogo.html?cat=merch" class="cat-card reveal">
-        <img src="https://images.unsplash.com/photo-1520975867040-1f7fead66882?w=600&q=70" alt="Merch" class="cat-img" loading="lazy">
-        <div class="cat-overlay"></div>
-        <div class="cat-label"><span class="cat-name">Merch</span><span class="cat-count">Ropa y accesorios</span></div>
-      </a>
-      <a href="html/catalogo.html?cat=art" class="cat-card reveal">
-        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&q=70" alt="Arte" class="cat-img" loading="lazy">
-        <div class="cat-overlay"></div>
-        <div class="cat-label"><span class="cat-name">Arte</span><span class="cat-count">Posters y litografías</span></div>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     BENTO GRID
-====================================================== -->
-<section class="s-pad">
-  <div class="container">
-    <div class="section-head centered reveal">
-      <span class="eyebrow">El mundo oscuro</span>
-      <h2>Cultura Metal</h2>
-    </div>
-    <div class="bento">
-      <div class="bento-item bento-big reveal-left">
-        <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&q=70" alt="Concierto" class="bento-img" loading="lazy">
-        <div class="bento-grad"></div>
-        <div class="bento-content">
-          <span class="bento-tag">Selección del mes</span>
-          <div class="bento-title">Master of Puppets — 38 años de brutalidad eterna</div>
-          <div class="bento-sub">El álbum que lo cambió todo, remasterizado</div>
+        <div class="nav-links">
+          <a href="#categories">Catalog</a>
+          <a href="#bestsellers">Bestsellers</a>
+          <a href="#who-we-are">The House</a>
+          <a href="#faq">Questions</a>
         </div>
-      </div>
-      <div class="bento-item bento-tall reveal-right" style="padding:2rem 1.75rem;display:flex;flex-direction:column;justify-content:space-between;">
-        <div>
-          <span class="bento-tag">Nuestra colección</span>
-          <div class="bento-title" style="font-size:1.1rem;margin-bottom:1.5rem;">Números que hablan</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:1.5rem;">
-          <div>
-            <div class="bento-stat-num"><span data-count="500">0</span>+</div>
-            <div class="bento-stat-label">Productos en catálogo</div>
+        <div class="nav-actions">
+          <div class="search-wrapper">
+            <input type="text" id="search-input" class="search-input" placeholder="Search the vault..." oninput="liveSearch(this.value)" />
           </div>
-          <div style="height:1px;background:rgba(100,0,0,0.2);"></div>
-          <div>
-            <div class="bento-stat-num"><span data-count="50">0</span>+</div>
-            <div class="bento-stat-label">Bandas representadas</div>
-          </div>
-          <div style="height:1px;background:rgba(100,0,0,0.2);"></div>
-          <div>
-            <div class="bento-stat-num"><span data-count="2000">0</span>+</div>
-            <div class="bento-stat-label">Clientes en las sombras</div>
-          </div>
+          <button class="cart-btn" onclick="toggleCart()">
+            Cart <span class="cart-count" id="cart-count">0</span>
+          </button>
+          <button class="logout-btn" onclick="handleLogout()">Leave</button>
         </div>
-      </div>
-      <div class="bento-item bento-wide reveal">
-        <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=700&q=70" alt="Vinilo" class="bento-img" loading="lazy">
-        <div class="bento-grad"></div>
-        <div class="bento-content">
-          <span class="bento-tag">Vinilo</span>
-          <div class="bento-title" style="font-size:1.1rem;">Nuevos prensados en colores</div>
-        </div>
-      </div>
-      <div class="bento-item bento-sq reveal" style="padding:1.75rem;display:flex;flex-direction:column;justify-content:center;">
-        <span class="bento-tag">Envíos</span>
-        <div class="bento-title" style="font-size:1.05rem;margin:.5rem 0;">Gratis desde $1,000 MXN</div>
-        <div class="bento-sub">Entrega en todo México</div>
-      </div>
-      <div class="bento-item bento-sq reveal" style="padding:1.75rem;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(145deg,rgba(100,0,0,0.2),rgba(18,0,34,0.82));">
-        <span class="bento-tag">Garantía</span>
-        <div class="bento-title" style="font-size:1.05rem;margin:.5rem 0;">100% Oficial</div>
-        <div class="bento-sub">Solo merch licenciado</div>
-      </div>
-      <div class="bento-item bento-sq reveal" style="padding:1.75rem;display:flex;flex-direction:column;justify-content:center;">
-        <span class="bento-tag">Pago</span>
-        <div class="bento-title" style="font-size:1.05rem;margin:.5rem 0;">Contra entrega</div>
-        <div class="bento-sub">Paga cuando lo recibas</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     CAROUSEL — Destacados
-====================================================== -->
-<section class="s-pad s-divide">
-  <div class="container">
-    <div class="d-flex align-items-end justify-content-between gap-3 flex-wrap mb-4 reveal">
-      <div class="section-head" style="margin-bottom:0;">
-        <span class="eyebrow">Selección oscura</span>
-        <h2>Productos Destacados</h2>
-      </div>
-      <a href="html/catalogo.html" class="btn-liquid btn-ghost btn-sm-liq">Ver todo</a>
-    </div>
-    <div class="carousel-wrap" data-carousel data-autoplay="5000">
-      <div class="carousel-track" id="featuredTrack"></div>
-      <div class="carousel-nav">
-        <button class="carousel-btn" data-carousel-prev aria-label="Anterior">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <div class="carousel-dots"></div>
-        <button class="carousel-btn" data-carousel-next aria-label="Siguiente">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        <button class="nav-hamburger" onclick="toggleMobileMenu()">
+          <span></span><span></span><span></span>
         </button>
       </div>
+      <div id="mobile-menu" class="mobile-menu hidden">
+        <a href="#categories" onclick="toggleMobileMenu()">Catalog</a>
+        <a href="#bestsellers" onclick="toggleMobileMenu()">Bestsellers</a>
+        <a href="#who-we-are" onclick="toggleMobileMenu()">The House</a>
+        <a href="#faq" onclick="toggleMobileMenu()">Questions</a>
+        <button class="logout-btn" onclick="handleLogout()">Leave the Castle</button>
+      </div>
+    </nav>
+
+    <!-- ─── SEARCH RESULTS OVERLAY ─── -->
+    <div id="search-results" class="search-results-overlay hidden">
+      <div class="container">
+        <div class="search-results-header">
+          <h3>Search Results</h3>
+          <button onclick="clearSearch()">Close</button>
+        </div>
+        <div id="search-results-grid" class="product-grid"></div>
+      </div>
     </div>
-  </div>
-</section>
 
+    <!-- ─── HERO ─── -->
+    <section id="hero" class="hero-section">
+      <div class="hero-bg"></div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow reveal-up">Est. MMXIV — The Dark Atelier</p>
+        <h1 class="hero-headline reveal-up">Where Darkness<br /><em>Becomes</em> Art</h1>
+        <p class="hero-body reveal-up">Artifacts forged for those who dwell between worlds. Gothic fashion, ceremonial music, and objects of shadow — curated for the discerning immortal.</p>
+        <div class="hero-cta reveal-up">
+          <a href="#categories" class="btn-primary-dark">Explore the Vault</a>
+          <a href="#who-we-are" class="btn-ghost">Our Covenant</a>
+        </div>
+      </div>
+      <div class="hero-scroll-indicator">
+        <div class="scroll-line"></div>
+        <span>Descend</span>
+      </div>
+    </section>
 
-<!-- ======================================================
-     BRANDS STRIP
-====================================================== -->
-<section class="s-pad-sm" style="border-top:1px solid rgba(100,0,0,0.12);border-bottom:1px solid rgba(100,0,0,0.12);">
-  <div class="container">
-    <p class="eyebrow text-center mb-3 reveal">Bandas en nuestra colección</p>
-    <div class="brands-strip reveal">
-      <span class="brand-pill">Metallica</span>
-      <span class="brand-pill">Black Sabbath</span>
-      <span class="brand-pill">Iron Maiden</span>
-      <span class="brand-pill">Slayer</span>
-      <span class="brand-pill">Rammstein</span>
-      <span class="brand-pill">Behemoth</span>
-      <span class="brand-pill">Tool</span>
-      <span class="brand-pill">Ghost</span>
-      <span class="brand-pill">Type O Negative</span>
-      <span class="brand-pill">Dimmu Borgir</span>
-    </div>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     TESTIMONIALS
-====================================================== -->
-<section class="s-pad">
-  <div class="container">
-    <div class="section-head centered reveal">
-      <span class="eyebrow">Lo que dicen</span>
-      <h2>Voces de las Sombras</h2>
-    </div>
-    <div class="row g-4" data-stagger="100">
-      <div class="col-md-4 reveal">
-        <div class="testi-card h-100">
-          <p class="testi-quote">Encontré el vinilo de Bloody Kisses que buscaba desde hace años. Edición impecable, llegó en perfectas condiciones.</p>
-          <div class="testi-author">
-            <div class="testi-avatar">🦇</div>
-            <div><div class="testi-name">Rodrigo M.</div><div class="testi-loc">Guadalajara, JAL</div></div>
+    <!-- ─── BENTO GRID ─── -->
+    <section id="bento" class="bento-section">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">The Codex</p>
+          <h2 class="section-title">Crafted in Darkness,<br /><em>Worn in Defiance</em></h2>
+        </div>
+        <div class="bento-grid">
+          <div class="bento-item bento-large reveal-up" style="--delay:0.1s">
+            <img src="https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=900&q=80" alt="Gothic atelier" />
+            <div class="bento-text">
+              <h3>The Atelier</h3>
+              <p>Every piece is conceived in candlelight, born from centuries of gothic tradition and reimagined for the modern abyss.</p>
+            </div>
+          </div>
+          <div class="bento-item bento-tall reveal-up" style="--delay:0.2s">
+            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80" alt="Dark fashion" />
+            <div class="bento-text">
+              <h3>Materials</h3>
+              <p>Velvet, obsidian leather, and silver-threaded silk — only materials worthy of nocturnal royalty.</p>
+            </div>
+          </div>
+          <div class="bento-item bento-stat reveal-up" style="--delay:0.3s">
+            <div class="stat-number">XVI</div>
+            <div class="stat-label">Years of Dark Mastery</div>
+          </div>
+          <div class="bento-item bento-stat reveal-up" style="--delay:0.4s">
+            <div class="stat-number">3K+</div>
+            <div class="stat-label">Devoted Patrons</div>
+          </div>
+          <div class="bento-item bento-wide reveal-up" style="--delay:0.5s">
+            <img src="https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?w=900&q=80" alt="Gothic music" />
+            <div class="bento-text">
+              <h3>Sound & Ceremony</h3>
+              <p>From rare vinyl pressings to ceremonial instruments — we curate the soundtrack of the eternal night.</p>
+            </div>
+          </div>
+          <div class="bento-item bento-quote reveal-up" style="--delay:0.6s">
+            <blockquote>"We do not sell products. We sell identity. We sell belonging to the dark."</blockquote>
+            <cite>— Lord V. Dracula, Founder</cite>
           </div>
         </div>
       </div>
-      <div class="col-md-4 reveal">
-        <div class="testi-card h-100">
-          <p class="testi-quote">La capa ceremonial de Ghost es exactamente como en las fotos. Calidad brutal y envío súper rápido. Volveré pronto.</p>
-          <div class="testi-author">
-            <div class="testi-avatar">🌑</div>
-            <div><div class="testi-name">Valentina S.</div><div class="testi-loc">Ciudad de México</div></div>
+    </section>
+
+    <!-- ─── WHO WE ARE ─── -->
+    <section id="who-we-are" class="who-section">
+      <div class="who-bg-text">CASTLEVANIA</div>
+      <div class="container">
+        <div class="who-inner">
+          <div class="who-images">
+            <div class="who-img-1 reveal-up">
+              <img src="https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&q=80" alt="Gothic portrait" />
+            </div>
+            <div class="who-img-2 reveal-up" style="--delay:0.2s">
+              <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&q=80" alt="Dark fashion editorial" />
+            </div>
+            <div class="who-img-badge reveal-up" style="--delay:0.4s">
+              <span>Since</span>
+              <strong>2008</strong>
+            </div>
+          </div>
+          <div class="who-text reveal-up" style="--delay:0.3s">
+            <p class="section-eyebrow">Who We Are</p>
+            <h2 class="section-title">Architects of<br /><em>Gothic Vision</em></h2>
+            <p>We are not a brand. We are a bloodline. Castlevania was born from the belief that darkness is not an absence of light — it is a sovereign aesthetic, a way of being, a refusal to be ordinary.</p>
+            <p>Every artifact in our vault is chosen with obsessive care. We work with independent gothic artisans, cult record labels, and shadow designers from Transylvania to Tokyo.</p>
+            <div class="who-pillars">
+              <div class="pillar">
+                <h4>Uncompromising</h4>
+                <p>No mass production. Every item limited.</p>
+              </div>
+              <div class="pillar">
+                <h4>Ancestral</h4>
+                <p>Rooted in centuries of dark tradition.</p>
+              </div>
+              <div class="pillar">
+                <h4>Immortal</h4>
+                <p>Made to last beyond mortal lifetimes.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-md-4 reveal">
-        <div class="testi-card h-100">
-          <p class="testi-quote">El box set de Rammstein está increíble. Nunca pensé encontrar algo así en México. El único lugar de este nivel.</p>
-          <div class="testi-author">
-            <div class="testi-avatar">🩸</div>
-            <div><div class="testi-name">Erik W.</div><div class="testi-loc">Monterrey, NL</div></div>
+    </section>
+
+    <!-- ─── CATEGORIES ─── -->
+    <section id="categories" class="categories-section">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">The Vault</p>
+          <h2 class="section-title">Enter Your<br /><em>Chamber</em></h2>
+        </div>
+        <div class="categories-grid">
+          <div class="cat-card reveal-up" style="--delay:0.1s" onclick="filterCategory('merch')">
+            <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=800&q=80" alt="Merch" />
+            <div class="cat-overlay">
+              <div class="cat-label">
+                <span class="cat-num">01</span>
+                <h3>Merch</h3>
+                <p>Gothic apparel & wearable darkness</p>
+              </div>
+            </div>
+          </div>
+          <div class="cat-card reveal-up" style="--delay:0.2s" onclick="filterCategory('music')">
+            <img src="https://images.unsplash.com/photo-1461360370896-922624d12aa1?w=800&q=80" alt="Music" />
+            <div class="cat-overlay">
+              <div class="cat-label">
+                <span class="cat-num">02</span>
+                <h3>CD's & Vinyls</h3>
+                <p>Ritual sound & sonic ceremonies</p>
+              </div>
+            </div>
+          </div>
+          <div class="cat-card reveal-up" style="--delay:0.3s" onclick="filterCategory('accessories')">
+            <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=800&q=80" alt="Accessories" />
+            <div class="cat-overlay">
+              <div class="cat-label">
+                <span class="cat-num">03</span>
+                <h3>Accessories</h3>
+                <p>Talismans, rings & adornments</p>
+              </div>
+            </div>
+          </div>
+          <div class="cat-card reveal-up" style="--delay:0.4s" onclick="filterCategory('extras')">
+            <img src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80" alt="Extras" />
+            <div class="cat-overlay">
+              <div class="cat-label">
+                <span class="cat-num">04</span>
+                <h3>Extras</h3>
+                <p>Grimoires, candles & occult objects</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── BEST SELLERS ─── -->
+    <section id="bestsellers" class="bestsellers-section">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <p class="section-eyebrow">Favored by the Dark</p>
+          <h2 class="section-title">Best Sellers</h2>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-bar reveal-up">
+          <button class="filter-btn active" data-cat="all" onclick="filterProducts('all', this)">All</button>
+          <button class="filter-btn" data-cat="merch" onclick="filterProducts('merch', this)">Merch</button>
+          <button class="filter-btn" data-cat="music" onclick="filterProducts('music', this)">CD's & Vinyls</button>
+          <button class="filter-btn" data-cat="accessories" onclick="filterProducts('accessories', this)">Accessories</button>
+          <button class="filter-btn" data-cat="extras" onclick="filterProducts('extras', this)">Extras</button>
+        </div>
+
+        <div id="products-grid" class="product-grid"></div>
+      </div>
+    </section>
+
+    <!-- ─── FAQ ─── -->
+    <section id="faq" class="faq-section">
+      <div class="container">
+        <div class="faq-inner">
+          <div class="faq-header reveal-up">
+            <p class="section-eyebrow">Answered</p>
+            <h2 class="section-title">Frequently<br /><em>Asked</em></h2>
+          </div>
+          <div class="faq-list reveal-up">
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Where does Castlevania ship?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>We dispatch from our vault in Transylvania to all corners of the mortal world. Standard delivery takes 7–14 days. Express options are available for those too impatient to wait for eternity.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Are your items truly limited edition?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Absolutely. Every product in our vault is produced in runs of 100 units or fewer. Once a piece is gone, it returns to shadow — permanently. We do not restock.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>What is your return policy?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>The darkness accepts returns within 14 days of receipt, provided items are unworn and in original condition. Vinyl and CDs may only be returned if sealed. Contact our court at returns@castlevania.mx.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Do you offer gift wrapping?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>All orders arrive in our signature obsidian black packaging sealed with crimson wax. Gift notes inscribed on parchment are available upon request at checkout — at no additional cost.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Are garments true to size?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Our garments follow European sizing with a deliberate oversized silhouette — the gothic form demands volume. We recommend sizing down if you prefer a fitted cut. Detailed measurements are listed on each product page.</p>
+              </div>
+            </div>
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFaq(this)">
+                <span>Do you work with independent artists?</span>
+                <span class="faq-icon">+</span>
+              </button>
+              <div class="faq-answer">
+                <p>Yes. Castlevania is built on collaboration with independent gothic designers, underground musicians, and occult artists worldwide. If you wish to submit your work for consideration, write to atelier@castlevania.mx.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="site-footer">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row g-5">
+            <div class="col-lg-4">
+              <div class="footer-brand">
+                <span class="footer-orn">✦</span>
+                <h3>Castlevania</h3>
+              </div>
+              <p class="footer-tagline">Gothic commerce for the discerning creature of the night. All artifacts are limited. All darkness is intentional.</p>
+              <div class="footer-social">
+                <a href="#">Ig</a>
+                <a href="#">Tw</a>
+                <a href="#">Bc</a>
+                <a href="#">Sp</a>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+              <h4 class="footer-heading">Vault</h4>
+              <ul class="footer-links">
+                <li><a href="#categories">Merch</a></li>
+                <li><a href="#categories">CD's & Vinyls</a></li>
+                <li><a href="#categories">Accessories</a></li>
+                <li><a href="#categories">Extras</a></li>
+                <li><a href="#bestsellers">Best Sellers</a></li>
+              </ul>
+            </div>
+            <div class="col-sm-6 col-lg-2">
+              <h4 class="footer-heading">House</h4>
+              <ul class="footer-links">
+                <li><a href="#who-we-are">Our Story</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#">Press</a></li>
+                <li><a href="#">Collaborations</a></li>
+                <li><a href="#">Careers</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-4">
+              <h4 class="footer-heading">The Newsletter</h4>
+              <p class="footer-body">Join the order. Receive cryptic announcements, exclusive drops, and invitations to secret events.</p>
+              <div class="footer-subscribe">
+                <input type="email" placeholder="Your email address" />
+                <button onclick="subscribeNewsletter()">Join</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <p>&copy; 2024 Castlevania. All rights reserved. <span>Privacy</span> · <span>Terms</span> · <span>Cookies</span></p>
+          <p>All prices in MXN. Crafted in the dark.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ─── MINI CART ─── -->
+    <div id="cart-sidebar" class="cart-sidebar">
+      <div class="cart-sidebar-inner">
+        <div class="cart-header">
+          <h3>Your Vault</h3>
+          <button class="cart-close" onclick="toggleCart()">✕</button>
+        </div>
+        <div id="cart-items" class="cart-items"></div>
+        <div id="cart-footer" class="cart-footer hidden">
+          <div class="cart-total">
+            <span>Total</span>
+            <span id="cart-total-price">$0 MXN</span>
+          </div>
+          <button class="btn-primary-dark w-100" onclick="goToCheckout()">Proceed to Checkout</button>
+        </div>
+        <div id="cart-empty" class="cart-empty">
+          <p>Your vault is empty.</p>
+          <p>Fill it with darkness.</p>
+        </div>
+      </div>
+    </div>
+    <div id="cart-overlay" class="cart-overlay" onclick="toggleCart()"></div>
+
+    <!-- ─── CHECKOUT ─── -->
+    <div id="checkout-page" class="checkout-page hidden">
+      <div class="checkout-inner">
+        <button class="checkout-back" onclick="closeCheckout()">← Back to Vault</button>
+        <div class="checkout-header">
+          <span class="gate-ornament">✦</span>
+          <h2>Complete Your Order</h2>
+          <p>All transactions are sealed with dark covenant.</p>
+        </div>
+        <div class="checkout-body">
+          <div class="checkout-form-col">
+            <div class="checkout-section">
+              <h4>Shipping Address</h4>
+              <div class="checkout-fields">
+                <div class="ck-field">
+                  <label>Full Name</label>
+                  <input type="text" id="ck-name" placeholder="Vladislava Morrow" />
+                </div>
+                <div class="ck-field">
+                  <label>Email</label>
+                  <input type="email" id="ck-email" placeholder="you@domain.com" />
+                </div>
+                <div class="ck-field">
+                  <label>Address</label>
+                  <input type="text" id="ck-address" placeholder="13 Darkhollow Lane" />
+                </div>
+                <div class="ck-field-row">
+                  <div class="ck-field">
+                    <label>City</label>
+                    <input type="text" id="ck-city" placeholder="Ciudad de México" />
+                  </div>
+                  <div class="ck-field">
+                    <label>Postal Code</label>
+                    <input type="text" id="ck-zip" placeholder="06600" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="checkout-section">
+              <h4>Payment</h4>
+              <div class="checkout-fields">
+                <div class="ck-field">
+                  <label>Card Number</label>
+                  <input type="text" id="ck-card" placeholder="4242 4242 4242 4242" maxlength="19" oninput="formatCard(this)" />
+                </div>
+                <div class="ck-field-row">
+                  <div class="ck-field">
+                    <label>Expiry</label>
+                    <input type="text" id="ck-expiry" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" />
+                  </div>
+                  <div class="ck-field">
+                    <label>CVV</label>
+                    <input type="text" id="ck-cvv" placeholder="•••" maxlength="3" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="checkout-error" class="gate-error hidden"></div>
+            <button class="btn-primary-dark w-100" onclick="processOrder()">Seal the Order</button>
+          </div>
+          <div class="checkout-summary-col">
+            <h4>Order Summary</h4>
+            <div id="checkout-items-list" class="checkout-items-list"></div>
+            <div class="checkout-total-row">
+              <span>Subtotal</span>
+              <span id="ck-subtotal">$0</span>
+            </div>
+            <div class="checkout-total-row">
+              <span>Shipping</span>
+              <span>$150 MXN</span>
+            </div>
+            <div class="checkout-total-row checkout-grand">
+              <span>Total</span>
+              <span id="ck-total">$0</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
 
-
-<!-- ======================================================
-     SUBSCRIPTION PLANS
-====================================================== -->
-<section class="s-pad s-divide" id="planes">
-  <div class="container">
-    <div class="section-head centered reveal">
-      <span class="eyebrow">Únete al culto</span>
-      <h2>Planes de Suscripción</h2>
-    </div>
-    <p class="text-center reveal" style="color:var(--muted);font-size:.88rem;max-width:440px;margin:0 auto 3rem;line-height:1.75;">
-      Recibe cada mes una caja curada con los mejores lanzamientos del metal oscuro, directo a tu puerta.
-    </p>
-    <div class="plans-grid">
-      <!-- INVOCADO -->
-      <div class="plan-card reveal">
-        <div class="plan-name">Invocado</div>
-        <div class="plan-desc">Para el iniciado que quiere empezar su ritual mensual</div>
-        <div class="plan-price"><sup>$</sup>299<sub>/mes</sub></div>
-        <hr class="plan-divider">
-        <ul class="plan-features">
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>1 CD o vinilo al mes</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Envío gratis</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Acceso a preventa</li>
-          <li class="plan-feat" style="color:var(--faint);"><div class="feat-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>Merch exclusivo</li>
-          <li class="plan-feat" style="color:var(--faint);"><div class="feat-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>Arte coleccionable</li>
-        </ul>
-        <button class="btn-liquid btn-ghost w-100">Seleccionar plan</button>
-      </div>
-      <!-- INICIADO -->
-      <div class="plan-card featured reveal" style="animation-delay:.1s">
-        <div class="plan-badge">Más popular</div>
-        <div class="plan-name">Iniciado</div>
-        <div class="plan-desc">La experiencia completa para el devoto del metal oscuro</div>
-        <div class="plan-price"><sup>$</sup>549<sub>/mes</sub></div>
-        <hr class="plan-divider">
-        <ul class="plan-features">
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>2 CDs o vinilos al mes</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Envío gratis + seguro</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Acceso prioritario</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>1 merch exclusivo</li>
-          <li class="plan-feat" style="color:var(--faint);"><div class="feat-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>Arte coleccionable</li>
-        </ul>
-        <button class="btn-liquid w-100">Seleccionar plan</button>
-      </div>
-      <!-- SUMO -->
-      <div class="plan-card reveal" style="animation-delay:.2s">
-        <div class="plan-name">Sumo Sacerdote</div>
-        <div class="plan-desc">Para el coleccionista que no acepta compromisos</div>
-        <div class="plan-price"><sup>$</sup>999<sub>/mes</sub></div>
-        <hr class="plan-divider">
-        <ul class="plan-features">
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>3 CDs + 1 vinilo</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Envío premium rastreado</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Primero en preventa global</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Merch exclusivo mensual</li>
-          <li class="plan-feat"><div class="feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="8" height="8"><polyline points="20 6 9 17 4 12"/></svg></div>Arte litográfico firmado</li>
-        </ul>
-        <button class="btn-liquid btn-ghost w-100">Seleccionar plan</button>
+    <!-- ─── ORDER SUCCESS ─── -->
+    <div id="order-success" class="order-success hidden">
+      <div class="success-inner">
+        <div class="success-icon">✦</div>
+        <h2>The Order is Sealed</h2>
+        <p>Your covenant has been recorded in the Book of Shadows. A confirmation descends to your email shortly.</p>
+        <div class="receipt" id="receipt"></div>
+        <button class="btn-primary-dark" onclick="closeSuccess()">Return to the Castle</button>
       </div>
     </div>
-  </div>
-</section>
 
+  </div><!-- end #main-site -->
 
-<!-- ======================================================
-     NEWSLETTER BANNER
-====================================================== -->
-<section class="s-pad-sm">
-  <div class="container">
-    <div class="nl-banner reveal">
-      <div class="row align-items-center g-4">
-        <div class="col-md-6">
-          <span class="eyebrow">Newsletter</span>
-          <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--bone);margin-bottom:.5rem;">Noticias desde el Averno</h3>
-          <p style="font-size:.82rem;color:var(--muted);line-height:1.75;">Nuevos lanzamientos, ediciones limitadas y ofertas exclusivas cada semana.</p>
-        </div>
-        <div class="col-md-6">
-          <div class="nl-form">
-            <input type="email" class="nl-input" placeholder="tu@correo.com" aria-label="Email">
-            <button class="btn-liquid" onclick="nlSubmit(this)">Suscribirse</button>
-          </div>
-          <p style="font-size:.68rem;color:var(--faint);margin-top:.6rem;">Sin spam. Solo metal. Cancela cuando quieras.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     FAQ
-====================================================== -->
-<section class="s-pad s-divide" id="faq">
-  <div class="container">
-    <div class="row g-5 align-items-start">
-      <div class="col-lg-4 reveal-left">
-        <div class="section-head">
-          <span class="eyebrow">Preguntas</span>
-          <h2>Lo que quieres saber</h2>
-        </div>
-        <p style="font-size:.85rem;color:var(--muted);line-height:1.75;">Si tu pregunta no está aquí, escríbenos y respondemos en menos de 24 horas.</p>
-        <a href="html/contacto.html" class="btn-liquid btn-ghost btn-sm-liq" style="margin-top:1.25rem;">Contactar</a>
-      </div>
-      <div class="col-lg-8 reveal-right">
-        <div class="faq-item">
-          <button class="faq-q">¿Los productos son 100% oficiales y licenciados?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Sí, absolutamente. Trabajamos directamente con distribuidores oficiales y sellos discográficos. Todos nuestros CDs, vinilos y merchandise tienen licencia oficial. No vendemos bootlegs ni reproducciones.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">¿Cuánto tiempo tarda el envío?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Procesamos en 1–2 días hábiles. Entrega en CDMX: 2–3 días. Interior de la República: 4–7 días hábiles. Guía de rastreo incluida.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">¿Puedo devolver un producto?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Aceptamos devoluciones dentro de 15 días naturales, siempre que el producto esté sin abrir y en estado original. Vinilos abiertos no son elegibles.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">¿Cuáles son los métodos de pago?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Aceptamos pago contra entrega, SPEI, OXXO Pay y tarjetas de crédito/débito. Todos los pagos online están encriptados con SSL.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">¿Tienen ediciones limitadas?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Sí, regularmente conseguimos ediciones limitadas, vinilos de colores y box sets numerados. Suscríbete al newsletter para enterarte primero.</div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q">¿Puedo solicitar un producto que no está en catálogo?<div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="10" height="10"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
-          <div class="faq-a">Sí, hacemos pedidos especiales. Contáctanos con el álbum, banda y formato que buscas. Tiempo estimado adicional: 2–4 semanas.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ======================================================
-     FOOTER
-====================================================== -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="row g-5">
-      <div class="col-lg-4 col-md-6">
-        <div class="footer-logo">Dark Metal Store</div>
-        <p class="footer-tagline">El único templo donde el metal más oscuro y honesto encuentra su hogar. Desde 2020, forjando comunidad en la oscuridad.</p>
-        <div class="footer-social mt-3">
-          <a href="#" class="social-btn" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="15" height="15" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
-          <a href="#" class="social-btn" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="15" height="15" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-          <a href="#" class="social-btn" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="15" height="15" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg></a>
-          <a href="#" class="social-btn" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor" width="13" height="13"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-3 col-6">
-        <p class="footer-col-title">Tienda</p>
-        <div class="footer-links">
-          <a href="html/catalogo.html">Catálogo</a>
-          <a href="html/catalogo.html?cat=cd">CDs</a>
-          <a href="html/catalogo.html?cat=vinyl">Vinilo</a>
-          <a href="html/catalogo.html?cat=merch">Merch</a>
-          <a href="html/catalogo.html?cat=art">Arte</a>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-3 col-6">
-        <p class="footer-col-title">Nosotros</p>
-        <div class="footer-links">
-          <a href="html/nosotros.html">Historia</a>
-          <a href="html/contacto.html">Contacto</a>
-          <a href="#planes">Suscripciones</a>
-          <a href="#faq">Preguntas</a>
-          <a href="html/login.html">Mi cuenta</a>
-        </div>
-      </div>
-      <div class="col-lg-4">
-        <p class="footer-col-title">Newsletter Oscuro</p>
-        <div class="nl-form" style="max-width:100%;">
-          <input type="email" class="nl-input" placeholder="tu@correo.com">
-          <button class="btn-liquid" onclick="nlSubmit(this)" style="white-space:nowrap">Unirse</button>
-        </div>
-        <p style="font-size:.68rem;color:var(--faint);margin-top:.6rem;">Novedades del metal cada semana.</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© 2024 Dark Metal Store — Todos los derechos reservados al abismo.</p>
-      <p class="footer-copy">Hecho con oscuridad en México</p>
-    </div>
-  </div>
-</footer>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/main.js"></script>
-<script src="js/animations.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const all = ProductDB.getAll();
-  const shuffled = [...all].sort(() => Math.random() - 0.5);
-  const track = document.getElementById("featuredTrack");
-  if (!track) return;
-  track.innerHTML = shuffled.map(p => `
-    <div class="carousel-slide">
-      <div class="product-card">
-        <div class="product-img-wrap">
-          <img src="${p.img}" alt="${p.name}" loading="lazy">
-          <div class="product-img-overlay"></div>
-          <span class="band-tag">${p.band}</span>
-          ${p.stock <= 5 ? `<span class="stock-tag">Últimas ${p.stock}</span>` : ''}
-        </div>
-        <div class="product-body">
-          <div class="stars">${'★'.repeat(p.rating)}${'☆'.repeat(5-p.rating)}</div>
-          <div class="product-name">${p.name}</div>
-          <div class="product-desc-sm">${p.desc}</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:auto;padding-top:.75rem;">
-            <div class="product-price"><sup>$</sup>${p.price.toLocaleString()}</div>
-            <button class="btn-liquid btn-sm-liq" onclick="Cart.add(${p.id})">Añadir</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join("");
-  window.dispatchEvent(new Event('resize'));
-});
-
-function nlSubmit(btn) {
-  const inp = btn.previousElementSibling;
-  if (!inp || !inp.value.includes('@')) { Toast.show('Email inválido','Ingresa un correo válido'); return; }
-  btn.textContent = '¡Listo!';
-  btn.disabled = true;
-  inp.value = '';
-  Toast.show('Suscripción confirmada','Bienvenido al culto oscuro');
-}
-</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>
